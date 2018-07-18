@@ -24,60 +24,38 @@ mongoose.connect("mongodb://localhost/webscraper");
 
 app.get("/", function(req, res) {
 
-    // Save an empty result object
-    var result = {};
 
     request("https://www.nytimes.com/", function(err, response, html) {
         // Load the HTML into cheerio and save it to a variable
         // '$' becomes a shorthand for cheerio's selector commands, much like jQuery's '$'
         var $ = cheerio.load(html);
 
-        
+        // Save an empty result array
+        var results = [];        
 
         $('article').each(function(i, element) {
             
-            result.title = $(this).find('h2').text();
+            var title = $(this).find('h2').text().trim();
 
-            result.link = $(this).find('h2').children('a').attr('href');
+            var link = $(this).find('h2').children('a').attr('href');
 
-            result.summary = $(this).find('.summary').text();
-            // result.title = $(this).children('a').text();
+            var summary = $(this).find('.summary').text().trim();
 
-            // result.link = $(this).children('a').attr('href');
-
-            // result.byline = $(this).children('p').find('.byline').text();
-
-            // result.summary = $(this).children('.summary').text();
-
-            // Add the text and href of every link, and save them as properties of the result object
-            // result.title = $(this)
-            // .children("a")
-            // .text();
-            // result.link = $(this)
-            // .children("a")
-            // .attr("href");
-
-            console.log("=================================")
-            console.log(result.summary);
-
+            if(title && summary) {
+                results.push({
+                    title: title,
+                    link: link,
+                    summary: summary
+                });
+            }
+            
         });
-        
+        console.log("=================================")
+        console.log(results);
+        res.json(results);
     });
-
+    // res.send(JSON.stringify(result)); 
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
