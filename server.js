@@ -21,7 +21,7 @@ app.engine('handlebars', handlebars({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
 // Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/testscraper3");
+mongoose.connect("mongodb://localhost/testscraper4");
 
 // Database Configuration with Mongoose
 // ---------------------------------------------------------------------------------------------------------------
@@ -35,6 +35,7 @@ var db = mongoose.connection;
 
 // import the mongoose models
 var Article = require("./models/Article");
+var UserComment = require("./models/UserComment");
   
 // Show any Mongoose errors
 db.on('error', function(err) {
@@ -48,7 +49,7 @@ db.once('open', function() {
   
 
 //========================================
-// routes
+// FOR THE SCRAPE / ARTICLE ROUTES
 //========================================
 
 app.get("/scrape", function(req, res) {
@@ -66,16 +67,20 @@ app.get("/scrape", function(req, res) {
             result.summary = $(this).find('.summary').text().trim();
 
             // TO DO - ADD VALIDATION BEFORE CREATING THE OBJECT
-            // result.title = title;
-            // result.link = link;
-            // result.summary = summary;
 
-            Article.create(result)
+            if(result.title && result.link && result.summary) {
+                Article.create(result)
                 .then(function(dbArticle) {
                     console.log(dbArticle);
                 }).catch(function(err) {
                     console.log(err);
                 });
+            }
+            // result.title = title;
+            // result.link = link;
+            // result.summary = summary;
+
+            
         });
         res.send("scrape complete!");
     });
@@ -100,6 +105,57 @@ app.get("/", function(req, res) {
         });
     // res.render("home", );
 });
+
+// ========================================
+// FOR THE COMMENTS ROUTES
+// ========================================
+
+// app.post("/comment/add", function(req, res) {
+//     UserComment.create(req.body.body)
+//         .then(function(dbUserComment) {
+//             console.log(dbUserComment);
+//         }).catch(function(err) {
+//             res.json(err);
+//         });
+// });
+
+// POST route for adding comments to articles
+app.post("/article/comment/create/:id", function(req, res) {
+
+    UserComment.create(req.body)
+        .then(function(dbUserComment) {
+            return Article.findOneAndUpdate({_id: req.params.id}, {comment: dbUserComment._id}, {new: true});
+        }).then(function(dbArticle) {
+            res.json(dbArticle);
+        }).catch(function(err) {
+            res.json(err);
+        });
+});
+
+// GET route for displaying all comments from the database
+app.get("/aricle/comment/:id", function(req, res) {
+    
+});
+
+
+// Route for saving/updating an Article's associated Note
+// app.post("/articles/:id", function(req, res) {
+//     // TODO
+//     // ====
+//     // save the new note that gets posted to the Notes collection
+//     // then find an article from the req.params.id
+//     // and update it's "note" property with the _id of the new note
+//     db.Note.create(req.body)
+//       .then(function(dbNote) {
+//         return db.Article.findOneAndUpdate({_id: req.params.id}, {note: dbNote._id }, { new: true});
+//       })
+//       .then(function(dbArticle) {
+//         res.json(dbArticle);
+//       }).catch(function(err) {
+//         res.json(err);
+//       });
+//   });
+
 
 // Set the app to listen on port 3000
 app.listen(3000, function() {
