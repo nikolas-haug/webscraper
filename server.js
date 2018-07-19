@@ -33,9 +33,10 @@ mongoose.connect("mongodb://localhost/testscraper3");
 
 var db = mongoose.connection;
 
+// import the mongoose models
 var Article = require("./models/Article");
   
-  // Show any Mongoose errors
+// Show any Mongoose errors
 db.on('error', function(err) {
     console.log('Mongoose Error: ', err);
 });
@@ -90,7 +91,14 @@ app.get("/api/articles", function(req, res) {
 });
 
 app.get("/", function(req, res) {
-    res.render("home");
+    // retrieve all scraped articles from the db
+    Article.find({})
+        .then(function(dbArticles) {
+            res.render("home", {articles: dbArticles});
+        }).catch(function(err) {
+            res.json(err);
+        });
+    // res.render("home", );
 });
 
 // Set the app to listen on port 3000
