@@ -4,6 +4,7 @@ var express    = require("express");
     cheerio    = require("cheerio");
     request    = require("request");
     mongoose   = require("mongoose");
+    axios      = require("axios");
 
 var app = express();
 
@@ -15,49 +16,82 @@ app.use(bodyParser.json());
 // Static directory
 app.use(express.static("public"));
 
+// Express-Handlebars
+app.engine('handlebars', handlebars({defaultLayout: 'main'}));
+app.set('view engine', 'handlebars');
+
 // Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/webscraper");
+mongoose.connect("mongodb://localhost/testscraper3");
+
+// Database Configuration with Mongoose
+// ---------------------------------------------------------------------------------------------------------------
+// Connect to localhost if not a production environment
+// if(process.env.NODE_ENV == 'production'){
+//     mongoose.connect('mongodb://heroku_60zpcwg0:ubn0n27pi2856flqoedo9glvh8@ds119578.mlab.com:19578/heroku_60zpcwg0');
+//   }
+//   else{
+
+var db = mongoose.connection;
+
+var Article = require("./models/Article");
+  
+  // Show any Mongoose errors
+db.on('error', function(err) {
+    console.log('Mongoose Error: ', err);
+});
+  
+// Once logged in to the db through mongoose, log a success message
+db.once('open', function() {
+    console.log('Mongoose connection successful.');
+});
+  
 
 //========================================
 // routes
 //========================================
 
-app.get("/", function(req, res) {
+app.get("/scrape", function(req, res) {
 
-
-    request("https://www.nytimes.com/", function(err, response, html) {
-        // Load the HTML into cheerio and save it to a variable
-        // '$' becomes a shorthand for cheerio's selector commands, much like jQuery's '$'
-        var $ = cheerio.load(html);
-
-        // Save an empty result array
-        var results = [];        
+    axios.get("https://www.nytimes.com").then(function(response) {
+        
+        var $ = cheerio.load(response.data);
 
         $('article').each(function(i, element) {
-            
-            var title = $(this).find('h2').text().trim();
 
-            var link = $(this).find('h2').children('a').attr('href');
+            let result = {};
 
-            var summary = $(this).find('.summary').text().trim();
+            result.title = $(this).find('h2').text().trim();
+            result.link = $(this).find('h2').children('a').attr('href');
+            result.summary = $(this).find('.summary').text().trim();
 
-            if(title && summary) {
-                results.push({
-                    title: title,
-                    link: link,
-                    summary: summary
+            // TO DO - ADD VALIDATION BEFORE CREATING THE OBJECT
+            // result.title = title;
+            // result.link = link;
+            // result.summary = summary;
+
+            Article.create(result)
+                .then(function(dbArticle) {
+                    console.log(dbArticle);
+                }).catch(function(err) {
+                    console.log(err);
                 });
-            }
-            
         });
-        console.log("=================================")
-        console.log(results);
-        res.json(results);
+        res.send("scrape complete!");
     });
-    // res.send(JSON.stringify(result)); 
+}); 
+
+app.get("/api/articles", function(req, res) {
+    Article.find({})
+        .then(function(dbArticles) {
+            res.json(dbArticles);
+        }).catch(function(err) {    
+            return console.log(err);
+        });
 });
 
-
+app.get("/", function(req, res) {
+    res.render("home");
+});
 
 // Set the app to listen on port 3000
 app.listen(3000, function() {
