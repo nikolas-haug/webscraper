@@ -39,7 +39,6 @@ db.once('open', function() {
     console.log('Mongoose connection successful.');
 });
   
-
 //========================================
 // FOR THE SCRAPE / ARTICLE ROUTES
 //========================================
@@ -75,6 +74,7 @@ app.get("/scrape", function(req, res) {
 
 app.get("/api/articles", function(req, res) {
     Article.find({})
+        .populate("comment")
         .then(function(dbArticles) {
             res.json(dbArticles);
         }).catch(function(err) {    
@@ -85,8 +85,13 @@ app.get("/api/articles", function(req, res) {
 app.get("/", function(req, res) {
     // retrieve all scraped articles from the db
     Article.find({})
+        .populate("comment")
         .then(function(dbArticles) {
-            // console.log(dbArticles.title);
+            // console.log(dbArticles.comment[0].body);
+            for(var i = 0; i < dbArticles.length; i++) {
+                console.log(dbArticles[i].comment);
+                dbArticles.userComment = dbArticles[i].comment;
+            }
             res.render("home", {articles: dbArticles});
         }).catch(function(err) {
             res.json(err);

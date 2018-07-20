@@ -13,10 +13,11 @@ $('.show-comments-btn').on('click', function() {
     $.ajax({
         method: "GET",
         url: "/article/comment/" + btnID 
+
     }).then(function(data) {
         console.log(data);
-        console.log(data.comment.body);
-        var commentTag = $("<p>").text(data.comment.body);
+        console.log(data.comment[0].body);
+        var commentTag = $("<p>").text(data.comment[0].body);
         $('#comments-div').append(commentTag);
     });
 });
