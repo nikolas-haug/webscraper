@@ -21,15 +21,7 @@ app.engine('handlebars', handlebars({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
 // Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/testscraper4");
-
-// Database Configuration with Mongoose
-// ---------------------------------------------------------------------------------------------------------------
-// Connect to localhost if not a production environment
-// if(process.env.NODE_ENV == 'production'){
-//     mongoose.connect('mongodb://heroku_60zpcwg0:ubn0n27pi2856flqoedo9glvh8@ds119578.mlab.com:19578/heroku_60zpcwg0');
-//   }
-//   else{
+mongoose.connect("mongodb://localhost/testscraper5");
 
 var db = mongoose.connection;
 
@@ -76,11 +68,6 @@ app.get("/scrape", function(req, res) {
                     console.log(err);
                 });
             }
-            // result.title = title;
-            // result.link = link;
-            // result.summary = summary;
-
-            
         });
         res.send("scrape complete!");
     });
@@ -99,6 +86,7 @@ app.get("/", function(req, res) {
     // retrieve all scraped articles from the db
     Article.find({})
         .then(function(dbArticles) {
+            // console.log(dbArticles.title);
             res.render("home", {articles: dbArticles});
         }).catch(function(err) {
             res.json(err);
@@ -110,21 +98,12 @@ app.get("/", function(req, res) {
 // FOR THE COMMENTS ROUTES
 // ========================================
 
-// app.post("/comment/add", function(req, res) {
-//     UserComment.create(req.body.body)
-//         .then(function(dbUserComment) {
-//             console.log(dbUserComment);
-//         }).catch(function(err) {
-//             res.json(err);
-//         });
-// });
-
 // POST route for adding comments to articles
 app.post("/article/comment/create/:id", function(req, res) {
 
     UserComment.create(req.body)
         .then(function(dbUserComment) {
-            return Article.findOneAndUpdate({_id: req.params.id}, {comment: dbUserComment._id}, {new: true});
+            return Article.findOneAndUpdate({_id: req.params.id}, { $push: {comment: dbUserComment._id } }, {new: true});
         }).then(function(dbArticle) {
             res.json(dbArticle);
         }).catch(function(err) {
@@ -133,29 +112,16 @@ app.post("/article/comment/create/:id", function(req, res) {
 });
 
 // GET route for displaying all comments from the database
-app.get("/aricle/comment/:id", function(req, res) {
-    
+app.get("/article/comment/:id", function(req, res) {
+    Article.findOne({_id: req.params.id})
+        .populate("comment")
+        .then(function(data) {
+            console.log(data);
+            res.json(data);
+        }).catch(function(err) {
+            res.json(err);
+        });
 });
-
-
-// Route for saving/updating an Article's associated Note
-// app.post("/articles/:id", function(req, res) {
-//     // TODO
-//     // ====
-//     // save the new note that gets posted to the Notes collection
-//     // then find an article from the req.params.id
-//     // and update it's "note" property with the _id of the new note
-//     db.Note.create(req.body)
-//       .then(function(dbNote) {
-//         return db.Article.findOneAndUpdate({_id: req.params.id}, {note: dbNote._id }, { new: true});
-//       })
-//       .then(function(dbArticle) {
-//         res.json(dbArticle);
-//       }).catch(function(err) {
-//         res.json(err);
-//       });
-//   });
-
 
 // Set the app to listen on port 3000
 app.listen(3000, function() {
