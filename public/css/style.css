@@ -1,3 +1,45 @@
-/* body {
-    background-color: red;
-} */
+/* custom css for webscraper app */
+
+/* universal styles */
+
+body {
+    background-color: #2F4550;
+}
+
+/* header */
+
+.jumbotron {
+    background-color: #9EBC9E;
+}
+
+
+/* typography */
+h1, h2, h5 {
+    font-family: 'Markazi Text', serif;
+}
+
+p, .comment-text {
+    font-family: 'Hind', sans-serif;
+}
+
+/* links */
+
+a {
+    color: #030027;
+}
+
+a:hover {
+    text-decoration: none;
+    color: #fff;
+    transition: all, 0.3s;
+}
+
+/* bootstrap cards */
+
+.card-header {
+    background-color: #B8DBD9;
+}
+
+.card-body {
+    background-color: #EEF4D4;
+}
