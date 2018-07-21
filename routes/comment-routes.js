@@ -6,8 +6,8 @@ var express    = require("express");
     mongoose   = require("mongoose");
     axios      = require("axios");
 
-var Article = require("../models/Article");
-var UserComment = require("../models/UserComment");
+var Article = require("../models/Article.js");
+var UserComment = require("../models/UserComment.js");
 
 // ========================================
 // FOR THE COMMENTS ROUTES
