@@ -1,41 +1,82 @@
 {{!-- HOME PAGE --}}
 
-<div class="container">
+{{!-- <div class="container">
     <div class="row">
         <div class="col-md-12 text-center">
             <h1>webscraper</h1>
         </div>
     </div>
+</div> --}}
+
+{{!-- bootstrap modal for comments --}}
+<div class="modal scrape-modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        {{!-- <h5 class="modal-title">Modal title</h5> --}}
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Successfully scraped!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="jumbotron jumbotron-fluid">
+  <div class="container text-center">
+    <h1 class="display-4">webscraper</h1>
+    <p class="lead">get all of your scraped news articles here and add your comments</p>
+    <button id="scrape-btn" class="btn">scrape</button>
+  </div>
 </div>
 
 <div class="container">
 
     <div class="row justify-content-center">
         {{#each articles}}
-        <div class="col-md-10">
+            <div class="col-md-10">
 
-                <h2>{{this.title}}</h2>
-                <a href="{{this.link}}">link to article</a>
-                <p>{{this.summary}}</p>
+                <div class="card">
+                    <div class="card-header">
+                        <h2><a href="{{this.link}}" target="_blank">{{this.title}}</a></h2>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">{{this.summary}}</p>
 
-                <div id="article-comments">
-                    {{!-- generate the user comments here --}}
+                        <form action="article/comment/create/{{this._id}}" method="POST">
+                            <div class="input-group mb-3">
+                                <input type="text" name="body" class="form-control" placeholder="your comment" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button">add comment</button>
+                                </div>
+                            </div>
+                        </form>
+                        
+                        <hr>
+
+                        {{!-- TO DO - check that comment exists for given article --}}
+                        {{!-- TO DO - add a hidden dropdown jquery delete button for each comment --}}
+                        <div id="comments-div">
+                            <h5>Comments:</h5>
+                            {{#comment}}
+        
+                                <form action="/article/comment/delete/{{_id}}?_method=DELETE" method="POST">
+                                    <button class="btn-danger item-delete-btn"><i class="fas fa-trash-alt"></i></button>
+                                    <div class="btn">{{body}}</div>
+                                </form>
+                                    
+                            {{/comment}}
+                        </div>
+
+                    </div>
                 </div>
-
-                {{!-- comment button for each article --}}
-                <form action="article/comment/create/{{this._id}}" method="POST">
-                    <input type="text" name="body">
-                    <button class="btn btn btn-warning add-comment-btn">add comment</button>
-                </form>
-
-                {{!-- TO DO - check that comment exists for given article --}}
-                {{!-- TO DO - add a hidden dropdown jquery delete button for each comment --}}
-                <div id="comments-div">
-                    {{#comment}}
-                        <p>{{body}}</p>
-                    {{/comment}}
-                </div>
-        </div>
+            </div>
         {{/each}}
     </div>
 

@@ -5,13 +5,34 @@ var express    = require("express");
     request    = require("request");
     mongoose   = require("mongoose");
     axios      = require("axios");
+    moment     = require("moment");
+    path       = require("path");
+    methodOverride = require("method-override");
 
 var app = express();
+
+// TO DO - get the date format helper working
+
+// register handlebars time format helpers
+// hbsEngine = handlebars.create({
+//     helpers: {
+//         extname: 'handlebars',
+//         defaultLayout: 'main',
+//         formatDate: function (date, format) {
+//             return moment(date).format(format);
+//         }
+//     }
+// });
+
+// app.set('views', path.join(__dirname, 'views'));
+// app.engine('handlebars', hbsEngine.engine);
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 // parse application/json
 app.use(bodyParser.json());
+// for method override on forms
+app.use(methodOverride('_method'));
 
 // Static directory
 app.use(express.static("public"));
@@ -21,7 +42,7 @@ app.engine('handlebars', handlebars({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
 // Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/testscraper9");
+mongoose.connect("mongodb://localhost/testscraper10");
 
 var db = mongoose.connection;
 

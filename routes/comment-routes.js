@@ -28,4 +28,14 @@ module.exports = function(app) {
                 res.json(err);
             });
     });
+
+    // DELETE route for removing comments from articles
+    app.delete("/article/comment/delete/:id", function(req, res) {
+        UserComment.remove({_id: req.params.id})
+        .then(function(data) {
+            res.redirect("/");
+        }).catch(function(err) {
+            res.json(err);
+        });
+    });
 }
