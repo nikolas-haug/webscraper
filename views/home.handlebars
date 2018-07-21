@@ -28,9 +28,8 @@
                     <button class="btn btn btn-warning add-comment-btn">add comment</button>
                 </form>
 
-                <button class="show-comments-btn" data-id="{{this._id}}">show comments</button>
-                
                 {{!-- TO DO - check that comment exists for given article --}}
+                {{!-- TO DO - add a hidden dropdown jquery delete button for each comment --}}
                 <div id="comments-div">
                     {{#comment}}
                         <p>{{body}}</p>
@@ -39,8 +38,5 @@
         </div>
         {{/each}}
     </div>
-
-
-
 
 </div>

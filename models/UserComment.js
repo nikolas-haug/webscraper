@@ -8,10 +8,6 @@ var UserCommentSchema = new Schema({
     body: {
         type: String
     }
-    // timeMade: {
-    //     type: String,
-    //     required: true
-    // }
 });
 
 //create the modle from the above schema

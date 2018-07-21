@@ -21,9 +21,11 @@ app.engine('handlebars', handlebars({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
 // Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/testscraper5");
+mongoose.connect("mongodb://localhost/testscraper7");
 
 var db = mongoose.connection;
+
+var scraper = require("./controllers/scraper");
 
 // import the mongoose models
 var Article = require("./models/Article");
@@ -43,61 +45,62 @@ db.once('open', function() {
 // FOR THE SCRAPE / ARTICLE ROUTES
 //========================================
 
-app.get("/scrape", function(req, res) {
+// app.get("/scrape", function(req, res) {
 
-    axios.get("https://www.nytimes.com").then(function(response) {
+//     scraper();
+
+//     res.redirect("/");
+
+//     // res.send("scrape complete");
+//     // axios.get("https://www.nytimes.com").then(function(response) {
         
-        var $ = cheerio.load(response.data);
+//     //     var $ = cheerio.load(response.data);
 
-        $('article').each(function(i, element) {
+//     //     $('article').each(function(i, element) {
 
-            let result = {};
+//     //         let result = {};
 
-            result.title = $(this).find('h2').text().trim();
-            result.link = $(this).find('h2').children('a').attr('href');
-            result.summary = $(this).find('.summary').text().trim();
+//     //         result.title = $(this).find('h2').text().trim();
+//     //         result.link = $(this).find('h2').children('a').attr('href');
+//     //         result.summary = $(this).find('.summary').text().trim();
 
-            // TO DO - ADD VALIDATION BEFORE CREATING THE OBJECT
+//     //         // TO DO - ADD VALIDATION BEFORE CREATING THE OBJECT
 
-            if(result.title && result.link && result.summary) {
-                Article.create(result)
-                .then(function(dbArticle) {
-                    console.log(dbArticle);
-                }).catch(function(err) {
-                    console.log(err);
-                });
-            }
-        });
-        res.send("scrape complete!");
-    });
-}); 
+//     //         if(result.title && result.link && result.summary) {
 
-app.get("/api/articles", function(req, res) {
-    Article.find({})
-        .populate("comment")
-        .then(function(dbArticles) {
-            res.json(dbArticles);
-        }).catch(function(err) {    
-            return console.log(err);
-        });
-});
+//     //             Article.create(result, function(err) {
+//     //                 if(err) {
+//     //                     console.log("article already exists in db: " + result.title);
+//     //                 } else {
+//     //                     // console.log(dbArticle);
+//     //                     console.log("new article added to db: " + result.title);
+//     //                 }
+//     //             });     
+//     //         }
+//     //     });
+//     // });
+// }); 
 
-app.get("/", function(req, res) {
-    // retrieve all scraped articles from the db
-    Article.find({})
-        .populate("comment")
-        .then(function(dbArticles) {
-            // console.log(dbArticles.comment[0].body);
-            for(var i = 0; i < dbArticles.length; i++) {
-                console.log(dbArticles[i].comment);
-                dbArticles.userComment = dbArticles[i].comment;
-            }
-            res.render("home", {articles: dbArticles});
-        }).catch(function(err) {
-            res.json(err);
-        });
-    // res.render("home", );
-});
+// app.get("/api/articles", function(req, res) {
+//     Article.find({})
+//         .populate("comment")
+//         .then(function(dbArticles) {
+//             res.json(dbArticles);
+//         }).catch(function(err) {    
+//             return console.log(err);
+//         });
+// });
+
+// app.get("/", function(req, res) {
+//     // retrieve all scraped articles from the db
+//     Article.find({})
+//         .populate("comment")
+//         .then(function(dbArticles) {
+//             res.render("home", {articles: dbArticles});
+//         }).catch(function(err) {
+//             res.json(err);
+//         });
+// });
 
 // ========================================
 // FOR THE COMMENTS ROUTES
@@ -127,6 +130,13 @@ app.get("/article/comment/:id", function(req, res) {
             res.json(err);
         });
 });
+
+// Import routes and give the server access to them.
+// var routes = require("./routes");
+// app.use("/", routes);
+
+// require ROUTES here
+require("./routes/article-routes")(app);
 
 // Set the app to listen on port 3000
 app.listen(3000, function() {
