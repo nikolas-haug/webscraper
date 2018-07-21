@@ -9,3 +9,8 @@ $('#scrape-btn').on('click', function() {
         $('.scrape-modal').modal('show');
     });
 });
+
+// TO DO - fix this so the page refreshes without reload
+$('#scrape-modal-dismiss').on('click', function() {
+    location.reload();
+});
