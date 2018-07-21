@@ -21,7 +21,7 @@ app.engine('handlebars', handlebars({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
 // Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/testscraper7");
+mongoose.connect("mongodb://localhost/testscraper9");
 
 var db = mongoose.connection;
 

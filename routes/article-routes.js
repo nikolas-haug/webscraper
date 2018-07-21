@@ -36,6 +36,7 @@ module.exports = function(app) {
     // GET route to retrieve all scraped articles from the db with their populated comments rendered to page
     app.get("/", function(req, res) {
         Article.find({})
+            .sort({time: "desc"})
             .populate("comment")
             .then(function(dbArticles) {
                 res.render("home", {articles: dbArticles});

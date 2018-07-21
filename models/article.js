@@ -18,6 +18,10 @@ var ArticleSchema = new Schema({
         type: String,
         required: true
     },
+    time: {
+        type: Date,
+        default: Date.now
+    },
     comment: [{
         type: Schema.Types.ObjectId,
         ref: "UserComment"
