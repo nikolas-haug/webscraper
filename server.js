@@ -54,11 +54,11 @@ mongoose.connect(MONGODB_URI);
 
 var db = mongoose.connection;
 
-var scraper = require("./controllers/scraper");
+// var scraper = require("./controllers/scraper");
 
 // import the mongoose models
-var Article = require("./models/Article");
-var UserComment = require("./models/UserComment");
+// var Article = require("./models/Article");
+// var UserComment = require("./models/UserComment");
   
 // Show any Mongoose errors
 db.on('error', function(err) {
