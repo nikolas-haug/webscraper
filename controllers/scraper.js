@@ -5,7 +5,7 @@ var Article = require("../models/Article");
 
 function scraper() {
 
-    var scrapeCheck = "";
+    // var scrapeCheck = "";
 
     axios.get("https://www.nytimes.com").then(function(response) {
         
@@ -19,7 +19,7 @@ function scraper() {
             result.link = $(this).find('h2').children('a').attr('href');
             result.summary = $(this).find('.summary').text().trim();
 
-            // TO DO - ADD VALIDATION BEFORE CREATING THE OBJECT
+            // TO DO - RETURN TRUE OR FALSE IF THE DATA ALREADY EXISTS TO ALERT USER
 
             if(result.title && result.link && result.summary) {
 
@@ -34,7 +34,7 @@ function scraper() {
             }
         });
     });
-    return scrapeCheck;
+    // return scrapeCheck;
 }
 
 module.exports = scraper;

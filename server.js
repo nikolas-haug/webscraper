@@ -40,103 +40,10 @@ db.on('error', function(err) {
 db.once('open', function() {
     console.log('Mongoose connection successful.');
 });
-  
-//========================================
-// FOR THE SCRAPE / ARTICLE ROUTES
-//========================================
-
-// app.get("/scrape", function(req, res) {
-
-//     scraper();
-
-//     res.redirect("/");
-
-//     // res.send("scrape complete");
-//     // axios.get("https://www.nytimes.com").then(function(response) {
-        
-//     //     var $ = cheerio.load(response.data);
-
-//     //     $('article').each(function(i, element) {
-
-//     //         let result = {};
-
-//     //         result.title = $(this).find('h2').text().trim();
-//     //         result.link = $(this).find('h2').children('a').attr('href');
-//     //         result.summary = $(this).find('.summary').text().trim();
-
-//     //         // TO DO - ADD VALIDATION BEFORE CREATING THE OBJECT
-
-//     //         if(result.title && result.link && result.summary) {
-
-//     //             Article.create(result, function(err) {
-//     //                 if(err) {
-//     //                     console.log("article already exists in db: " + result.title);
-//     //                 } else {
-//     //                     // console.log(dbArticle);
-//     //                     console.log("new article added to db: " + result.title);
-//     //                 }
-//     //             });     
-//     //         }
-//     //     });
-//     // });
-// }); 
-
-// app.get("/api/articles", function(req, res) {
-//     Article.find({})
-//         .populate("comment")
-//         .then(function(dbArticles) {
-//             res.json(dbArticles);
-//         }).catch(function(err) {    
-//             return console.log(err);
-//         });
-// });
-
-// app.get("/", function(req, res) {
-//     // retrieve all scraped articles from the db
-//     Article.find({})
-//         .populate("comment")
-//         .then(function(dbArticles) {
-//             res.render("home", {articles: dbArticles});
-//         }).catch(function(err) {
-//             res.json(err);
-//         });
-// });
-
-// ========================================
-// FOR THE COMMENTS ROUTES
-// ========================================
-
-// POST route for adding comments to articles
-app.post("/article/comment/create/:id", function(req, res) {
-
-    UserComment.create(req.body)
-        .then(function(dbUserComment) {
-            return Article.findOneAndUpdate({_id: req.params.id}, { $push: {comment: dbUserComment._id } }, {new: true});
-        }).then(function(dbArticle) {
-            res.json(dbArticle);
-        }).catch(function(err) {
-            res.json(err);
-        });
-});
-
-// GET route for displaying all comments from the database
-app.get("/article/comment/:id", function(req, res) {
-    Article.findOne({_id: req.params.id})
-        .populate("comment")
-        .then(function(data) {
-            console.log(data);
-            res.json(data);
-        }).catch(function(err) {
-            res.json(err);
-        });
-});
-
-// Import routes and give the server access to them.
-// var routes = require("./routes");
-// app.use("/", routes);
 
 // require ROUTES here
 require("./routes/article-routes")(app);
+require("./routes/comment-routes")(app);
 
 // Set the app to listen on port 3000
 app.listen(3000, function() {
