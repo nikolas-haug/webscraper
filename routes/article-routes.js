@@ -6,8 +6,8 @@ var express    = require("express");
     mongoose   = require("mongoose");
     axios      = require("axios");
 
-var Article = require("../models/Article.js");
-var scraper = require("../controllers/scraper.js");
+var Article = require("../models/Article");
+var scraper = require("../controllers/scraper");
 
 //========================================
 // FOR THE SCRAPE / ARTICLE ROUTES

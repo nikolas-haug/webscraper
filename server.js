@@ -71,8 +71,8 @@ db.once('open', function() {
 });
 
 // require ROUTES here
-require("./routes/article-routes.js")(app);
-require("./routes/comment-routes.js")(app);
+require("./routes/article-routes")(app);
+require("./routes/comment-routes")(app);
 
 // Set the app to listen on port 3000
 app.listen(process.env.PORT || 3000, function() {

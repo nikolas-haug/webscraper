@@ -1,7 +1,7 @@
 var axios      = require("axios");
     cheerio    = require("cheerio");
 
-var Article = require("../models/Article.js");
+var Article = require("../models/Article");
 
 function scraper() {
 
